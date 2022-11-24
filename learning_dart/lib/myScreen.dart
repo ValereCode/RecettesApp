@@ -2,7 +2,9 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:learning_dart/favorite.dart';
+import 'package:learning_dart/favoriteChangeNotifier.dart';
 import 'package:learning_dart/recipe.dart';
+import 'package:provider/provider.dart';
 
 class MySreen extends StatelessWidget {
   const MySreen({Key? key, required this.recipe}) : super(key: key);
@@ -29,9 +31,8 @@ class MySreen extends StatelessWidget {
                 Text(recipe.user,
                     style: TextStyle(color: Colors.grey[500], fontSize: 20))
               ])),
-          FavoriteWidget(
-              isFavorited: recipe.isFavorite,
-              favoriteCount: recipe.favoriteCount)
+          const FavoriteIconWidget(),
+          FavoriteTextWidget()
         ]));
     //==========================================================================
 
@@ -68,23 +69,28 @@ class MySreen extends StatelessWidget {
     );
 //==============================================================================
 
-    return Scaffold(
-        appBar: AppBar(title: const Text("Mes recettes")),
-        body: ListView(
-            // Avec se widget, on n'aura plus de problème de overflow et donc on peut scroller facilement
-            children: [
-              CachedNetworkImage(
-                imageUrl: recipe.imageUrl,
-                placeholder: ((context, url) =>
-                    const Center(child: CircularProgressIndicator())),
-                errorWidget: ((context, url, error) => const Icon(Icons.error)),
-                width: 600,
-                height: 240,
-                fit: BoxFit.cover, // Afficher au mieux l'image
-              ),
-              titleSection,
-              buttonSection,
-              descriptionSection
-            ]));
+    return ChangeNotifierProvider(
+      create: ((context) =>
+          FavoriteChangeNotifier(recipe.isFavorite, recipe.favoriteCount)),
+      child: Scaffold(
+          appBar: AppBar(title: const Text("Mes recettes")),
+          body: ListView(
+              // Avec se widget, on n'aura plus de problème de overflow et donc on peut scroller facilement
+              children: [
+                CachedNetworkImage(
+                  imageUrl: recipe.imageUrl,
+                  placeholder: ((context, url) =>
+                      const Center(child: CircularProgressIndicator())),
+                  errorWidget: ((context, url, error) =>
+                      const Icon(Icons.error)),
+                  width: 600,
+                  height: 240,
+                  fit: BoxFit.cover, // Afficher au mieux l'image
+                ),
+                titleSection,
+                buttonSection,
+                descriptionSection
+              ])),
+    );
   }
 }

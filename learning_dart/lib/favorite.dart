@@ -1,55 +1,63 @@
 // ignore_for_file: unnecessary_this
-
 import 'package:flutter/material.dart';
+import 'package:learning_dart/favoriteChangeNotifier.dart';
+import 'package:provider/provider.dart';
 
-class FavoriteWidget extends StatefulWidget {
-  final bool isFavorited;
-  final int favoriteCount;
-
-  const FavoriteWidget({
-    Key? key,
-    required this.isFavorited,
-    required this.favoriteCount,
-  }) : super(key: key);
+//==============================================================================
+// Une icone widget
+class FavoriteIconWidget extends StatefulWidget {
+  const FavoriteIconWidget({super.key});
 
   @override
   // ignore: library_private_types_in_public_api
-  _FavoriteWidgetState createState() =>
-      // ignore: no_logic_in_create_state
-      _FavoriteWidgetState(this.isFavorited, this.favoriteCount);
+  _FavoriteIconWidgetState createState() => _FavoriteIconWidgetState();
 }
 
-class _FavoriteWidgetState extends State<FavoriteWidget> {
-  bool _isFavorited;
-  int _favoriteCount;
+class _FavoriteIconWidgetState extends State<FavoriteIconWidget> {
+  bool _isFavorited = true;
 
-  _FavoriteWidgetState(this._isFavorited, this._favoriteCount);
-
-  void onPressed() {
+  void onPressed(FavoriteChangeNotifier notifier) {
     setState(() {
       if (_isFavorited) {
         _isFavorited = false;
-        _favoriteCount -= 1;
       } else {
         _isFavorited = true;
-        _favoriteCount += 1;
       }
     });
+
+    notifier.isFavorited = _isFavorited;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        IconButton(
-            onPressed: onPressed,
-            icon: _isFavorited
-                ? const Icon(Icons.favorite)
-                : const Icon(Icons.favorite_border),
-            color: Colors.red),
-        // Une icone
-        Text('$_favoriteCount')
-      ],
-    );
+    FavoriteChangeNotifier notifier =
+        Provider.of<FavoriteChangeNotifier>(context);
+    _isFavorited = notifier.isFavorited;
+    return IconButton(
+        onPressed: (() => onPressed(notifier)),
+        icon: _isFavorited
+            ? const Icon(Icons.favorite)
+            : const Icon(Icons.favorite_border),
+        color: Colors.red);
+    // Une icone
+  }
+}
+
+//==============================================================================
+// Un texte widget
+class FavoriteTextWidget extends StatefulWidget {
+  const FavoriteTextWidget({super.key});
+
+  @override
+  // ignore: library_private_types_in_public_api
+  _FavoriteTextWidgetState createState() => _FavoriteTextWidgetState();
+}
+
+class _FavoriteTextWidgetState extends State<FavoriteTextWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<FavoriteChangeNotifier>(
+        builder: ((context, notifier, _) =>
+            Text(notifier.favoriteCount.toString())));
   }
 }
