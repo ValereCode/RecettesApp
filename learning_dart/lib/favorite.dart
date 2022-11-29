@@ -16,13 +16,10 @@ class FavoriteIconWidget extends StatefulWidget {
 class _FavoriteIconWidgetState extends State<FavoriteIconWidget> {
   bool _isFavorited = true;
 
+  // La méthode à appeler lorsqu'on appuie sur le petit coeur
   void onPressed(FavoriteChangeNotifier notifier) {
     setState(() {
-      if (_isFavorited) {
-        _isFavorited = false;
-      } else {
-        _isFavorited = true;
-      }
+      _isFavorited = _isFavorited ? false : true;
     });
 
     notifier.isFavorited = _isFavorited;
@@ -44,10 +41,13 @@ class _FavoriteIconWidgetState extends State<FavoriteIconWidget> {
 }
 
 //==============================================================================
+// Ici il s'agit de la classe qui contiendra le à coté de l'icone de love
 // Un texte widget
+
 class FavoriteTextWidget extends StatefulWidget {
   const FavoriteTextWidget({super.key});
 
+  // On crée ensuite un état du nombre
   @override
   // ignore: library_private_types_in_public_api
   _FavoriteTextWidgetState createState() => _FavoriteTextWidgetState();
@@ -57,6 +57,7 @@ class _FavoriteTextWidgetState extends State<FavoriteTextWidget> {
   @override
   Widget build(BuildContext context) {
     return Consumer<FavoriteChangeNotifier>(
+        // Le widget Consumer est là pour écouter
         builder: ((context, notifier, _) =>
             Text(notifier.favoriteCount.toString())));
   }

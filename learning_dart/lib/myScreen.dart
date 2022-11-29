@@ -7,9 +7,9 @@ import 'package:learning_dart/recipe.dart';
 import 'package:provider/provider.dart';
 
 class MySreen extends StatelessWidget {
-  const MySreen({Key? key, required this.recipe}) : super(key: key);
+  MySreen({Key? key, required this.recipe}) : super(key: key);
 
-  final Recipe recipe;
+  Recipe recipe;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +32,7 @@ class MySreen extends StatelessWidget {
                     style: TextStyle(color: Colors.grey[500], fontSize: 20))
               ])),
           const FavoriteIconWidget(),
-          FavoriteTextWidget()
+          const FavoriteTextWidget()
         ]));
     //==========================================================================
 
@@ -68,7 +68,7 @@ class MySreen extends StatelessWidget {
       child: Text(recipe.description, softWrap: true),
     );
 //==============================================================================
-
+    // Il va écouter notre FavoriteChangeNotifier
     return ChangeNotifierProvider(
       create: ((context) =>
           FavoriteChangeNotifier(recipe.isFavorite, recipe.favoriteCount)),
@@ -77,16 +77,18 @@ class MySreen extends StatelessWidget {
           body: ListView(
               // Avec se widget, on n'aura plus de problème de overflow et donc on peut scroller facilement
               children: [
-                CachedNetworkImage(
-                  imageUrl: recipe.imageUrl,
-                  placeholder: ((context, url) =>
-                      const Center(child: CircularProgressIndicator())),
-                  errorWidget: ((context, url, error) =>
-                      const Icon(Icons.error)),
-                  width: 600,
-                  height: 240,
-                  fit: BoxFit.cover, // Afficher au mieux l'image
-                ),
+                Hero(
+                    tag: "image${recipe.title}",
+                    child: CachedNetworkImage(
+                      imageUrl: recipe.imageUrl,
+                      placeholder: ((context, url) =>
+                          const Center(child: CircularProgressIndicator())),
+                      errorWidget: ((context, url, error) =>
+                          const Icon(Icons.error)),
+                      width: 600,
+                      height: 240,
+                      fit: BoxFit.cover, // Afficher au mieux l'image
+                    )),
                 titleSection,
                 buttonSection,
                 descriptionSection
